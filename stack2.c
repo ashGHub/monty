@@ -49,3 +49,15 @@ void add(stack_t **stack, unsigned int line_number)
 	(*stack)->next->n = (node->n + (*stack)->next->n);
 	pop(stack, line_number);
 }
+
+/**
+ * nop - does not do anything
+ * @stack: pointer to the stack
+ * @line_number: command line number
+ */
+void nop(stack_t **stack, unsigned int line_number)
+{
+	(void)stack;
+	(void)line_number;
+	/* does not do anything */
+}
