@@ -71,6 +71,29 @@ void pint(stack_t **stack, unsigned int line_number)
 }
 
 /**
+ * pop - pop the value at the top of the stack
+ * @stack: pointer to the stack
+ * @line_number: command line number
+ */
+void pop(stack_t **stack, unsigned int line_number)
+{
+	stack_t *node;
+
+	if (*stack == NULL)
+	{
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	node = *stack;
+	*stack = (*stack)->next;
+	if (*stack != NULL)
+	{
+		(*stack)->prev = NULL;
+	}
+	free(node);
+}
+
+/**
  * push_cmd_error - throws stack command error
  * @stk: pointer to the stack
  * @line_number: command line number
