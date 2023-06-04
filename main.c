@@ -64,6 +64,8 @@ void inteprate_line(char *line, stack_t **stk, unsigned int line_number)
 	void (*handle)(stack_t **, unsigned int) = NULL;
 
 	free_opcode_args();
+	if (is_comment(line))
+		return;
 	set_opcode_args(line);
 	/* empty line */
 	if (opcode_args == NULL)

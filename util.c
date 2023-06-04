@@ -55,6 +55,21 @@ char *resize(char *mem, int new_size)
 }
 
 /**
+ * is_comment - checks given string is a comment or not
+ * @str: string
+ *
+ * Return: 1 if is comment, otherwise 0
+ */
+short is_comment(char *str)
+{
+	unsigned int idx = 0;
+	char *delim = EMPTY_DELIMS;
+
+	skip_delimiter(str, &idx, delim);
+	return (str && str[idx] == '#');
+}
+
+/**
  * get_line - read a line from a file
  * @line: line pointer to set the new value
  * @file: pointer to a file

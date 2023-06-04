@@ -69,6 +69,7 @@ void free_stack(stack_t **stk);
 /* util functions */
 short safe_atoi(char *str, int *result);
 char *resize(char *mem, int new_size);
+short is_comment(char *str);
 size_t get_line(char **line, FILE *file);
 void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int);
 
