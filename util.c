@@ -103,6 +103,7 @@ void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
 	instruction_t handlers[] = {
 		{"push", push},
 		{"pall", pall},
+		{"pint", pint},
 		{NULL, NULL}
 	};
 	int idx = 0;
