@@ -106,6 +106,7 @@ void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
 		{"pint", pint},
 		{"pop", pop},
 		{"swap", swap},
+		{"add", add},
 		{NULL, NULL}
 	};
 	int idx = 0;

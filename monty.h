@@ -87,5 +87,6 @@ void push_cmd_error(stack_t **stk, unsigned int line_number);
 
 /* stack 2 functions */
 void swap(stack_t **stack, unsigned int line_number);
+void add(stack_t **stack, unsigned int line_number);
 
 #endif
