@@ -109,6 +109,7 @@ void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
 		{"add", monty_add},
 		{"nop", monty_nop},
 		{"sub", monty_sub},
+		{"div", monty_div},
 		{NULL, NULL}
 	};
 	int idx = 0;
