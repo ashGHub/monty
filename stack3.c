@@ -27,3 +27,27 @@ void monty_mod(stack_t **stack, unsigned int line_number)
 	(*stack)->next->n = ((*stack)->next->n % node->n);
 	monty_pop(stack, line_number);
 }
+
+/**
+ * monty_pchar - prints the char at the top of the stack
+ * @stack: pointer to the stack
+ * @line_number: command line number
+ */
+void monty_pchar(stack_t **stack, unsigned int line_number)
+{
+	stack_t *node;
+
+	if (*stack == NULL)
+	{
+		fprintf(stderr, "L%d: can't pchar, stack empty\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	node = *stack;
+	if (node->n < 0 || node->n > 127)
+	{
+		fprintf(stderr, "L%d: can't pchar, value out of range\n", line_number);
+		exit(EXIT_FAILURE);
+
+	}
+	printf("%c\n", node->n);
+}

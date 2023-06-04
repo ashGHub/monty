@@ -95,5 +95,6 @@ void monty_mul(stack_t **stack, unsigned int line_number);
 
 /** stack 3 functions */
 void monty_mod(stack_t **stack, unsigned int line_number);
+void monty_pchar(stack_t **stack, unsigned int line_number);
 
 #endif
