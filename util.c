@@ -129,6 +129,7 @@ void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
 		{"mod", monty_mod},
 		{"pchar", monty_pchar},
 		{"pstr", monty_pstr},
+		{"rotl", monty_rotl},
 		{NULL, NULL}
 	};
 	int idx = 0;
