@@ -51,3 +51,21 @@ void monty_pchar(stack_t **stack, unsigned int line_number)
 	}
 	printf("%c\n", node->n);
 }
+
+/**
+ * monty_pstr - prints the whole stack as string using ascii
+ * @stack: pointer to the stack
+ * @line_number: command line number
+ */
+void monty_pstr(stack_t **stack, unsigned int line_number)
+{
+	stack_t *node = *stack;
+
+	(void)line_number;
+	while (node && node->n != 0 && node->n > 0 && node->n <= 127)
+	{
+		printf("%c", node->n);
+		node = node->next;
+	}
+	printf("\n");
+}
