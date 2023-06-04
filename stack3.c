@@ -95,3 +95,27 @@ void monty_rotl(stack_t **stack, unsigned int line_number)
 	first_node->prev = node;
 	first_node->next = NULL;
 }
+
+/**
+ * monty_rotr - rotates the stack
+ * @stack: pointer to the stack
+ * @line_number: command line number
+ *
+ * Description: the last element becomes the top element
+ */
+void monty_rotr(stack_t **stack, unsigned int line_number)
+{
+	stack_t *node, *first_node;
+
+	(void)line_number;
+	if (*stack == NULL || (*stack)->next == NULL)
+		return;
+	first_node = *stack;
+	for (node = *stack; node->next; node = node->next)
+		;
+	node->prev->next = NULL;
+	node->next = first_node;
+	node->prev = NULL;
+	first_node->prev = node;
+	*stack = node;
+}
