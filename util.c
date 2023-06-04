@@ -101,14 +101,14 @@ size_t get_line(char **line, FILE *file)
 void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
 {
 	instruction_t handlers[] = {
-		{"push", push},
-		{"pall", pall},
-		{"pint", pint},
-		{"pop", pop},
-		{"swap", swap},
-		{"add", add},
-		{"nop", nop},
-		{"sub", sub},
+		{"push", monty_push},
+		{"pall", monty_pall},
+		{"pint", monty_pint},
+		{"pop", monty_pop},
+		{"swap", monty_swap},
+		{"add", monty_add},
+		{"nop", monty_nop},
+		{"sub", monty_sub},
 		{NULL, NULL}
 	};
 	int idx = 0;

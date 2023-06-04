@@ -1,11 +1,11 @@
 #include "monty.h"
 
 /**
- * push - push new value to the stack
+ * monty_push - push new value to the stack
  * @stack: pointer to the stack
  * @line_number: command line number
  */
-void push(stack_t **stack, unsigned int line_number)
+void monty_push(stack_t **stack, unsigned int line_number)
 {
 	stack_t *new, *temp;
 	int value, is_successful;
@@ -18,12 +18,14 @@ void push(stack_t **stack, unsigned int line_number)
 	}
 	if (opcode_args->next == NULL || opcode_args->next->token == NULL)
 	{
-		push_cmd_error(stack, line_number);
+		fprintf(stderr, "L%d: usage: push integer\n", line_number);
+		exit(EXIT_FAILURE);
 	}
 	is_successful = safe_atoi(opcode_args->next->token, &value);
 	if (!is_successful)
 	{
-		push_cmd_error(stack, line_number);
+		fprintf(stderr, "L%d: usage: push integer\n", line_number);
+		exit(EXIT_FAILURE);
 	}
 	new->n = value;
 	new->prev = NULL;
@@ -40,11 +42,11 @@ void push(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * pall - displays the stack value
+ * monty_pall - displays the stack value
  * @stack: pointer to the stack
  * @line_number: command line number
  */
-void pall(stack_t **stack, unsigned int line_number)
+void monty_pall(stack_t **stack, unsigned int line_number)
 {
 	stack_t *node;
 
@@ -56,11 +58,11 @@ void pall(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * pint - prints the value at the top of the stack
+ * monty_pint - prints the value at the top of the stack
  * @stack: pointer to the stack
  * @line_number: command line number
  */
-void pint(stack_t **stack, unsigned int line_number)
+void monty_pint(stack_t **stack, unsigned int line_number)
 {
 	if (*stack == NULL)
 	{
@@ -71,11 +73,11 @@ void pint(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * pop - pop the value at the top of the stack
+ * monty_pop - pop the value at the top of the stack
  * @stack: pointer to the stack
  * @line_number: command line number
  */
-void pop(stack_t **stack, unsigned int line_number)
+void monty_pop(stack_t **stack, unsigned int line_number)
 {
 	stack_t *node;
 
@@ -94,15 +96,29 @@ void pop(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * push_cmd_error - throws stack command error
- * @stk: pointer to the stack
+ * monty_swap - swap the top two elements of the stack
+ * @stack: pointer to the stack
  * @line_number: command line number
  */
-void push_cmd_error(stack_t **stk, unsigned int line_number)
+void monty_swap(stack_t **stack, unsigned int line_number)
 {
-	/* TODO: free line */
-	fprintf(stderr, "L%d: usage: push integer\n", line_number);
-	free_stack(stk);
-	free_opcode_args();
-	exit(EXIT_FAILURE);
+	stack_t *first_node, *second_node, *third_node;
+
+	if (*stack == NULL || (*stack)->next == NULL)
+	{
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	first_node = *stack;
+	second_node = (*stack)->next;
+	third_node = (*stack)->next->next;
+	second_node->prev = NULL;
+	second_node->next = first_node;
+	first_node->next = third_node;
+	first_node->prev = second_node;
+	if (third_node != NULL)
+	{
+		third_node->prev = first_node;
+	}
+	*stack = second_node;
 }
