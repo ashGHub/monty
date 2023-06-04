@@ -2,6 +2,8 @@
 
 /* opcode command and its arguments, the head is the command */
 opcode_token_t *opcode_args = NULL;
+/* flag to set list mode: if stack or queue */
+short LIST_MODE = STACK_MODE;
 
 /**
  * main - entry point to monty bytecode inteprator
@@ -80,6 +82,26 @@ void inteprate_line(char *line, stack_t **stk, unsigned int line_number)
 		free_opcode_args();
 		exit(EXIT_FAILURE);
 	}
-	handle(stk, line_number);
+	if (is_push_opcode() && LIST_MODE != STACK_MODE)
+	{
+		/* only push opcode, needs the list in stack mode */
+		change_list_mode(stk, STACK_MODE);
+		handle(stk, line_number);
+		/* revert the mode to current setting */
+		change_list_mode(stk, LIST_MODE);
+	}
+	else
+	{
+		handle(stk, line_number);
+	}
 	free_opcode_args();
+}
+
+/**
+ * is_push_opcode - checks if current opcode is push
+ * Return: 1 if is push code, otherwise 0
+ */
+short is_push_opcode(void)
+{
+	return (strcmp(opcode_args->token, "push") == 0);
 }

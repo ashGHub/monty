@@ -8,6 +8,8 @@
 
 #define LINE_BUFFER_LIMIT 100
 #define EMPTY_DELIMS " \n\t\a\b"
+#define STACK_MODE 1
+#define QUEUE_MODE 2
 
 /**
  * struct opcode_token_s - singly linked list representation
@@ -24,6 +26,8 @@ typedef struct opcode_token_s
 /* global variables */
 /* opcode command and its arguments, the head is the command */
 extern opcode_token_t *opcode_args;
+/* flag to set list mode: if stack or queue */
+extern short LIST_MODE;
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -56,6 +60,7 @@ typedef struct instruction_s
 } instruction_t;
 
 /* main functions */
+short is_push_opcode(void);
 void inteprate_line(char *line, stack_t **stk, unsigned int line_number);
 int inteprate_file(char *file_name);
 
@@ -99,5 +104,10 @@ void monty_pchar(stack_t **stack, unsigned int line_number);
 void monty_pstr(stack_t **stack, unsigned int line_number);
 void monty_rotl(stack_t **stack, unsigned int line_number);
 void monty_rotr(stack_t **stack, unsigned int line_number);
+
+/* stack 4 functions */
+void change_list_mode(stack_t **stk, short mode);
+void monty_stack(stack_t **stack, unsigned int line_number);
+void monty_queue(stack_t **stack, unsigned int line_number);
 
 #endif
