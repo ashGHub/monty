@@ -59,9 +59,9 @@ int inteprate_file(char *file_name)
  * inteprate_line - inteprates a monty bytecode opcode
  * @line: pointer to the line
  * @stk: pointer to stack
- * @line_number: opcode line number
+ * @n: opcode line number
  */
-void inteprate_line(char *line, stack_t **stk, unsigned int line_number)
+void inteprate_line(char *line, stack_t **stk, unsigned int n)
 {
 	void (*handle)(stack_t **, unsigned int) = NULL;
 
@@ -77,23 +77,12 @@ void inteprate_line(char *line, stack_t **stk, unsigned int line_number)
 	handle = get_opcode_handler(opcode_args->token);
 	if (handle == NULL)
 	{
-		invalid_opcode(opcode_args->token, line_number);
+		fprintf(stderr, "L%d: unknown instruction %s\n", n, opcode_args->token);
 		free(line);
 		free_opcode_args();
 		exit(EXIT_FAILURE);
 	}
-	if (is_push_opcode() && LIST_MODE != STACK_MODE)
-	{
-		/* only push opcode, needs the list in stack mode */
-		change_list_mode(stk, STACK_MODE);
-		handle(stk, line_number);
-		/* revert the mode to current setting */
-		change_list_mode(stk, LIST_MODE);
-	}
-	else
-	{
-		handle(stk, line_number);
-	}
+	handle(stk, n);
 	free_opcode_args();
 }
 

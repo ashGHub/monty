@@ -1,147 +1,96 @@
 #include "monty.h"
 
 /**
- * safe_atoi - parses integer from a string in safe way
- * @str: string to parse
- * @result: where the parsed value is going to be set
- *
- * Return: 1 if successful, otherwise 0 on error
+ * malloc_error - prints malloc error
  */
-short safe_atoi(char *str, int *result)
+void malloc_error(void)
 {
-	char *ptr;
-	short base_10 = 10;
-
-	if (str == NULL || result == NULL)
-	{
-		return (0);
-	}
-	*result = strtol(str, &ptr, base_10);
-	if (str == ptr || *ptr != '\0')
-	{
-		return (0);
-	}
-	return (1);
+	fprintf(stderr, "Error: malloc failed\n");
 }
 
 /**
- * resize - resize given memory
- * @mem: pointer to the memory
- * @new_size: size for the new memory
- *
- * Return: pointer to the new memory, else NULL on failure
+ * free_opcode_args - frees the global variable opcode
+ *                    and its args using linked list
  */
-char *resize(char *mem, int new_size)
+void free_opcode_args(void)
 {
-	char *new;
+	opcode_token_t *temp = NULL, *node = opcode_args;
 
-	new = malloc(sizeof(char) * new_size);
-	if (new == NULL)
+	if (opcode_args == NULL)
 	{
-		if (mem != NULL)
-		{
-			free(mem);
-		}
-		malloc_error();
-		exit(EXIT_FAILURE);
+		return;
 	}
-	if (mem == NULL)
+	while (node)
 	{
-		return (new);
+		temp = node->next;
+		free(node->token);
+		free(node);
+		node = temp;
 	}
-	strcpy(new, mem);
-	free(mem);
-	return (new);
+	opcode_args = NULL;
 }
 
 /**
- * is_comment - checks given string is a comment or not
- * @str: string
- *
- * Return: 1 if is comment, otherwise 0
+ * set_opcode_args - sets the global variable opcode
+ *                   with its args using linked list
+ *                   the head being the opcode and
+ *                   the rest of the nodes as argument
+ * @line: line to parse
  */
-short is_comment(char *str)
+void set_opcode_args(char *line)
 {
+	short result = 0;
+	char *token = NULL;
 	unsigned int idx = 0;
-	char *delim = EMPTY_DELIMS;
+	opcode_token_t *new = NULL, *node = NULL;
 
-	skip_delimiter(str, &idx, delim);
-	return (str && str[idx] == '#');
+	while ((result = get_opcode_token(line, &token, &idx)))
+	{
+		new = malloc(sizeof(opcode_token_t));
+		if (new == NULL || result == -1)
+		{
+			if (token != NULL)
+			{
+				free(token);
+			}
+			free_opcode_args();
+			malloc_error();
+			exit(EXIT_FAILURE);
+		}
+		new->token = token;
+		new->next = NULL;
+		if (opcode_args == NULL)
+		{
+			opcode_args = new;
+		}
+		else
+		{
+			node = opcode_args;
+			while (node->next)
+			{
+				node = node->next;
+			}
+			node->next = new;
+		}
+	}
 }
 
 /**
- * get_line - read a line from a file
- * @line: line pointer to set the new value
- * @file: pointer to a file
- *
- * Description: the pointer to line will be resized
- *              so, you only need to free it on
- *              your last call
- *
- * Return: total read bytes if successful,
- *	   0 if end of file or error
+ * free_stack - free stack memory allocation
+ * @stk: pointer to a stack
  */
-size_t get_line(char **line, FILE *file)
+void free_stack(stack_t **stk)
 {
-	short has_overflow = 0;
-	size_t read, total_read = 0;
-	char buffer[LINE_BUFFER_LIMIT];
-	unsigned int buffer_limit = LINE_BUFFER_LIMIT;
+	stack_t *node = NULL, *temp = NULL;
 
-	while (fgets(buffer, sizeof(buffer), file))
+	if (stk == NULL)
+		return;
+	node = *stk;
+	while (node)
 	{
-		read = strlen(buffer);
-		total_read += read;
-		has_overflow = total_read > buffer_limit;
-		if (*line == NULL || has_overflow)
-		{
-			*line = resize(*line, (buffer_limit * 2));
-		}
-		memcpy(*line + total_read - read, buffer, read);
-		if (buffer[read - 1] == '\n')
-		{
-			(*line)[total_read] = '\0';
-			return (total_read);
-		}
+		temp = node->next;
+		free(node);
+		node = temp;
 	}
-	return (0);
-}
-
-/**
- * get_opcode_handler - get the appropriate opcode handler function
- * @opcode: opcode
- *
- * Return: pointer to the opcode handler function
- */
-void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
-{
-	instruction_t handlers[] = {
-		{"push", monty_push},
-		{"pall", monty_pall},
-		{"pint", monty_pint},
-		{"pop", monty_pop},
-		{"swap", monty_swap},
-		{"add", monty_add},
-		{"nop", monty_nop},
-		{"sub", monty_sub},
-		{"div", monty_div},
-		{"mul", monty_mul},
-		{"mod", monty_mod},
-		{"pchar", monty_pchar},
-		{"pstr", monty_pstr},
-		{"rotl", monty_rotl},
-		{"rotr", monty_rotr},
-		{"stack", monty_stack},
-		{"queue", monty_queue},
-		{NULL, NULL}
-	};
-	int idx = 0;
-
-	while (handlers[idx].opcode)
-	{
-		if (strcmp(handlers[idx].opcode, opcode) == 0)
-			return (handlers[idx].f);
-		idx++;
-	}
-	return (NULL);
+	*stk = NULL;
 }

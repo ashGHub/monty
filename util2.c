@@ -1,92 +1,147 @@
 #include "monty.h"
 
 /**
- * get_opcode_token - gets opcode token from a given string
- *                    starting from a given index
- * @str: string
- * @token: pointer where the new token is going to be stored
- * @idx: start index
+ * safe_atoi - parses integer from a string in safe way
+ * @str: string to parse
+ * @result: where the parsed value is going to be set
  *
- * Return:  1 if successful,
- *          0 there is no token left to parse
- *         -1 if malloc error happened
+ * Return: 1 if successful, otherwise 0 on error
  */
-short get_opcode_token(char *str, char **token, unsigned int *idx)
+short safe_atoi(char *str, int *result)
 {
-	int i, token_len = 0;
-	char *delim = EMPTY_DELIMS, *result = NULL;
+	char *ptr;
+	short base_10 = 10;
 
-	*token = NULL;
-	skip_delimiter(str, idx, delim);
-	token_len = get_token_len(str, *idx, delim);
-	if (token_len == 0)
-		return (0);
-	/* +1 for null byte */
-	result = malloc(token_len + 1);
-	if (result == NULL)
-		return (-1);
-	for (i = 0; token_len > 0; i++)
+	if (str == NULL || result == NULL)
 	{
-		result[i] = str[*idx];
-		(*idx)++;
-		token_len--;
+		return (0);
 	}
-	result[i] = '\0';
-	*token = result;
+	*result = strtol(str, &ptr, base_10);
+	if (str == ptr || *ptr != '\0')
+	{
+		return (0);
+	}
 	return (1);
 }
 
 /**
- * is_delim - checks if a character is in a delimiter
- * @ch: character to check
- * @delim: string of a delimeters
+ * resize - resize given memory
+ * @mem: pointer to the memory
+ * @new_size: size for the new memory
  *
- * Return: 1 if it exists, 0 otherwise
+ * Return: pointer to the new memory, else NULL on failure
  */
-short is_delim(char ch, char *delim)
+char *resize(char *mem, int new_size)
 {
-	int idx;
+	char *new;
 
-	for (idx = 0; delim && delim[idx]; idx++)
+	new = malloc(sizeof(char) * new_size);
+	if (new == NULL)
 	{
-		if (delim[idx] == ch)
-			return (1);
+		if (mem != NULL)
+		{
+			free(mem);
+		}
+		malloc_error();
+		exit(EXIT_FAILURE);
+	}
+	if (mem == NULL)
+	{
+		return (new);
+	}
+	strcpy(new, mem);
+	free(mem);
+	return (new);
+}
+
+/**
+ * is_comment - checks given string is a comment or not
+ * @str: string
+ *
+ * Return: 1 if is comment, otherwise 0
+ */
+short is_comment(char *str)
+{
+	unsigned int idx = 0;
+	char *delim = EMPTY_DELIMS;
+
+	skip_delimiter(str, &idx, delim);
+	return (str && str[idx] == '#');
+}
+
+/**
+ * get_line - read a line from a file
+ * @line: line pointer to set the new value
+ * @file: pointer to a file
+ *
+ * Description: the pointer to line will be resized
+ *              so, you only need to free it on
+ *              your last call
+ *
+ * Return: total read bytes if successful,
+ *	   0 if end of file or error
+ */
+size_t get_line(char **line, FILE *file)
+{
+	short has_overflow = 0;
+	size_t read, total_read = 0;
+	char buffer[LINE_BUFFER_LIMIT];
+	unsigned int buffer_limit = LINE_BUFFER_LIMIT;
+
+	while (fgets(buffer, sizeof(buffer), file))
+	{
+		read = strlen(buffer);
+		total_read += read;
+		has_overflow = total_read > buffer_limit;
+		if (*line == NULL || has_overflow)
+		{
+			*line = resize(*line, (buffer_limit * 2));
+		}
+		memcpy(*line + total_read - read, buffer, read);
+		if (buffer[read - 1] == '\n')
+		{
+			(*line)[total_read] = '\0';
+			return (total_read);
+		}
 	}
 	return (0);
 }
 
 /**
- * skip_delimiter - skips the delimiter from a given string
- *                  starting from a given index till it gets
- *                  non-delimiter
- * @str: string
- * @idx: start index
- * @delim: token delimiter
- */
-void skip_delimiter(char *str, unsigned int *idx, char *delim)
-{
-	while (str && str[*idx] && is_delim(str[*idx], delim))
-		(*idx)++;
-}
-
-/**
- * get_token_len - gets the token length starting
- *                 from the given index till it gets
- *                 delimiter
- * @str: string
- * @idx: start index
- * @delim: token delimiter
+ * get_opcode_handler - get the appropriate opcode handler function
+ * @opcode: opcode
  *
- * Return: Length of the token
+ * Return: pointer to the opcode handler function
  */
-short get_token_len(char *str, unsigned int idx, char *delim)
+void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int)
 {
-	unsigned int token_len = 0;
+	instruction_t handlers[] = {
+		{"push", monty_push},
+		{"pall", monty_pall},
+		{"pint", monty_pint},
+		{"pop", monty_pop},
+		{"swap", monty_swap},
+		{"add", monty_add},
+		{"nop", monty_nop},
+		{"sub", monty_sub},
+		{"div", monty_div},
+		{"mul", monty_mul},
+		{"mod", monty_mod},
+		{"pchar", monty_pchar},
+		{"pstr", monty_pstr},
+		{"rotl", monty_rotl},
+		{"rotr", monty_rotr},
+		{"stack", monty_stack},
+		{"queue", monty_queue},
+		{NULL, NULL}
+	};
+	int idx = 0;
 
-	while (str && str[idx] && !is_delim(str[idx], delim))
+	while (handlers[idx].opcode)
 	{
+		if (strcmp(handlers[idx].opcode, opcode) == 0)
+			return (handlers[idx].f);
 		idx++;
-		token_len++;
 	}
-	return (token_len);
+	return (NULL);
 }

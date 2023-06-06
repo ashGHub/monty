@@ -71,12 +71,10 @@ void monty_pstr(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * monty_rotl - rotates the stack
+ * monty_rotl - the top element becomes the last
+ *              and the second element becomes the first
  * @stack: pointer to the stack
  * @line_number: command line number
- *
- * Description: the top element becomes the last
- *              and the second element becomes the first
  */
 void monty_rotl(stack_t **stack, unsigned int line_number)
 {
@@ -97,11 +95,9 @@ void monty_rotl(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * monty_rotr - rotates the stack
+ * monty_rotr - the last element becomes the top element
  * @stack: pointer to the stack
  * @line_number: command line number
- *
- * Description: the last element becomes the top element
  */
 void monty_rotr(stack_t **stack, unsigned int line_number)
 {

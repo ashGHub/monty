@@ -60,31 +60,35 @@ typedef struct instruction_s
 } instruction_t;
 
 /* main functions */
+
 short is_push_opcode(void);
 void inteprate_line(char *line, stack_t **stk, unsigned int line_number);
 int inteprate_file(char *file_name);
 
-/* help functions */
-void invalid_opcode(char *code, int n);
+/* util functions */
+
 void malloc_error(void);
 void free_opcode_args(void);
 void set_opcode_args(char *line);
 void free_stack(stack_t **stk);
 
-/* util functions */
+/* util 2  functions */
+
 short safe_atoi(char *str, int *result);
 char *resize(char *mem, int new_size);
 short is_comment(char *str);
 size_t get_line(char **line, FILE *file);
 void (*get_opcode_handler(char *opcode))(stack_t **, unsigned int);
 
-/* util 2 functions */
+/* util 3 functions */
+
 short is_delim(char ch, char *delim);
 void skip_delimiter(char *str, unsigned int *idx, char *delim);
 short get_token_len(char *str, unsigned int idx, char *delim);
 short get_opcode_token(char *str, char **token, unsigned int *idx);
 
 /* stack functions */
+
 void monty_push(stack_t **stack, unsigned int line_number);
 void monty_pall(stack_t **stack, unsigned int line_number);
 void monty_pint(stack_t **stack, unsigned int line_number);
@@ -92,6 +96,7 @@ void monty_pop(stack_t **stack, unsigned int line_number);
 void monty_swap(stack_t **stack, unsigned int line_number);
 
 /* stack 2 functions */
+
 void monty_add(stack_t **stack, unsigned int line_number);
 void monty_nop(stack_t **stack, unsigned int line_number);
 void monty_sub(stack_t **stack, unsigned int line_number);
@@ -99,6 +104,7 @@ void monty_div(stack_t **stack, unsigned int line_number);
 void monty_mul(stack_t **stack, unsigned int line_number);
 
 /** stack 3 functions */
+
 void monty_mod(stack_t **stack, unsigned int line_number);
 void monty_pchar(stack_t **stack, unsigned int line_number);
 void monty_pstr(stack_t **stack, unsigned int line_number);
@@ -106,6 +112,7 @@ void monty_rotl(stack_t **stack, unsigned int line_number);
 void monty_rotr(stack_t **stack, unsigned int line_number);
 
 /* stack 4 functions */
+
 void change_list_mode(stack_t **stk, short mode);
 void monty_stack(stack_t **stack, unsigned int line_number);
 void monty_queue(stack_t **stack, unsigned int line_number);

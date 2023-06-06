@@ -1,7 +1,7 @@
 #include "monty.h"
 
 /**
- * change_list_mode - changes the list mode to stack and queue
+ * change_list_mode - changes the list mode to give mode
  * @stk: pointer to the stack
  * @mode: mode type
  */
@@ -39,6 +39,7 @@ void monty_stack(stack_t **stack, unsigned int line_number)
 	(void)line_number;
 	(void)stack;
 	LIST_MODE = STACK_MODE;
+	change_list_mode(stack, LIST_MODE);
 }
 
 /**
@@ -51,4 +52,5 @@ void monty_queue(stack_t **stack, unsigned int line_number)
 	(void)line_number;
 	(void)stack;
 	LIST_MODE = QUEUE_MODE;
+	change_list_mode(stack, LIST_MODE);
 }
